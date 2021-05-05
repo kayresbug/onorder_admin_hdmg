@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ServiceActivity.class);
                 startActivity(intent);
-                finish();
+//                finish();
             }
         });
 
@@ -116,9 +116,11 @@ public class MainActivity extends AppCompatActivity {
         orderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, OrderActivity.class);
-                startActivity(intent);
-                finish();
+                Toast.makeText(MainActivity.this, "준비중 입니다.", Toast.LENGTH_SHORT).show();
+
+//                Intent intent = new Intent(MainActivity.this, OrderActivity.class);
+//                startActivity(intent);
+//                finish();
             }
         });
         tableBtn = findViewById(R.id.menu5);
@@ -140,11 +142,10 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot item : snapshot.getChildren()) {
                     PrintOrderModel printOrderModel = item.getValue(PrintOrderModel.class);
-                    Log.d("daon_test", "print = " + item.getKey());
                     if (printOrderModel.getPrintStatus().equals("x")) {
-                        print(printOrderModel);
                         printOrderModel.setPrintStatus("o");
                         FirebaseDatabase.getInstance().getReference().child("order").child("휘도명가").child(time).child(item.getKey()).setValue(printOrderModel);
+                        print(printOrderModel);
 
                     }
                 }
@@ -163,9 +164,9 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot item : snapshot.getChildren()) {
                     PrintOrderModel printOrderModel = item.getValue(PrintOrderModel.class);
                     if (printOrderModel.getPrintStatus().equals("x")) {
-                        print(printOrderModel);
                         printOrderModel.setPrintStatus("o");
                         FirebaseDatabase.getInstance().getReference().child("service").child("휘도명가").child(time).child(item.getKey()).setValue(printOrderModel);
+                        print(printOrderModel);
 
                     }
                 }
@@ -176,6 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void initFirebase(){
+
     }
 
     public void print(PrintOrderModel printOrderModel) {
@@ -196,53 +200,84 @@ public class MainActivity extends AppCompatActivity {
 
         sam4sPrint = isPrinter.setPrinter1();
         sam4sPrint2 = isPrinter.setPrinter2();
-
-        if (!sam4sPrint.IsConnected(Sam4sPrint.DEVTYPE_ETHERNET) || !sam4sPrint.IsConnected(Sam4sPrint.DEVTYPE_ETHERNET)) {
-            AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
-                    android.R.style.Theme_DeviceDefault_Light_Dialog);
-
-            oDialog.setMessage("프린터 이상")
-                    .setNeutralButton("예", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .setCancelable(false) // 백버튼으로 팝업창이 닫히지 않도록 한다.
-                    .show();
+        Sam4sBuilder builder = new Sam4sBuilder("ELLIX30", Sam4sBuilder.LANG_KO);
+        try {
+            builder.addTextAlign(Sam4sBuilder.ALIGN_CENTER);
+            builder.addFeedLine(2);
+            builder.addTextSize(3, 3);
+            builder.addText(printOrderModel.getTable());
+            builder.addFeedLine(2);
+            builder.addTextSize(2, 2);
+            builder.addTextAlign(Sam4sBuilder.ALIGN_RIGHT);
+            builder.addText(printOrderModel.getOrder());
+            builder.addFeedLine(2);
+            builder.addTextSize(1, 1);
+            builder.addText(printOrderModel.getTime());
+            builder.addFeedLine(1);
+            builder.addCut(Sam4sBuilder.CUT_FEED);
+            if (printOrderModel.getTable().contains("주문")) {
+                sam4sPrint.sendData(builder);
+                sam4sPrint2.sendData(builder);
+            } else {
+                sam4sPrint.sendData(builder);
+//                sam4sPrint2.sendData(builder);
+            }
             MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.bell);
             mp.start();
-        } else {
-            Sam4sBuilder builder = new Sam4sBuilder("ELLIX30", Sam4sBuilder.LANG_KO);
-            try {
-                builder.addTextAlign(Sam4sBuilder.ALIGN_CENTER);
-                builder.addFeedLine(2);
-                builder.addTextSize(3, 3);
-                builder.addText(printOrderModel.getTable());
-                builder.addFeedLine(2);
-                builder.addTextSize(2, 2);
-                builder.addTextAlign(Sam4sBuilder.ALIGN_RIGHT);
-                builder.addText(printOrderModel.getOrder());
-                builder.addFeedLine(2);
-                builder.addTextSize(1, 1);
-                builder.addText(printOrderModel.getTime());
-                builder.addFeedLine(1);
-                builder.addCut(Sam4sBuilder.CUT_FEED);
-                if (printOrderModel.getTable().contains("주문")) {
-                    sam4sPrint.sendData(builder);
-                    sam4sPrint2.sendData(builder);
-                } else {
-                    sam4sPrint.sendData(builder);
-                }
-                MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.bell);
-                mp.start();
 
-                isPrinter.closePrint1(sam4sPrint);
-                isPrinter.closePrint2(sam4sPrint2);
+            isPrinter.closePrint1(sam4sPrint);
+            isPrinter.closePrint2(sam4sPrint2);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+//        if (!sam4sPrint.IsConnected(Sam4sPrint.DEVTYPE_ETHERNET) || !sam4sPrint.IsConnected(Sam4sPrint.DEVTYPE_ETHERNET)) {
+//            AlertDialog.Builder oDialog = new AlertDialog.Builder(this,
+//                    android.R.style.Theme_DeviceDefault_Light_Dialog);
+//
+//            oDialog.setMessage("프린터 이상")
+//                    .setNeutralButton("예", new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//
+//                        }
+//                    })
+//                    .setCancelable(false) // 백버튼으로 팝업창이 닫히지 않도록 한다.
+//                    .show();
+//            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.bell);
+//            mp.start();
+//        } else {
+//            Sam4sBuilder builder = new Sam4sBuilder("ELLIX30", Sam4sBuilder.LANG_KO);
+//            try {
+//                builder.addTextAlign(Sam4sBuilder.ALIGN_CENTER);
+//                builder.addFeedLine(2);
+//                builder.addTextSize(3, 3);
+//                builder.addText(printOrderModel.getTable());
+//                builder.addFeedLine(2);
+//                builder.addTextSize(2, 2);
+//                builder.addTextAlign(Sam4sBuilder.ALIGN_RIGHT);
+//                builder.addText(printOrderModel.getOrder());
+//                builder.addFeedLine(2);
+//                builder.addTextSize(1, 1);
+//                builder.addText(printOrderModel.getTime());
+//                builder.addFeedLine(1);
+//                builder.addCut(Sam4sBuilder.CUT_FEED);
+//                if (printOrderModel.getTable().contains("주문")) {
+//                    sam4sPrint.sendData(builder);
+//                    sam4sPrint2.sendData(builder);
+//                } else {
+//                    sam4sPrint.sendData(builder);
+//                }
+//                MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.bell);
+//                mp.start();
+//
+//                isPrinter.closePrint1(sam4sPrint);
+//                isPrinter.closePrint2(sam4sPrint2);
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
 
     }
 

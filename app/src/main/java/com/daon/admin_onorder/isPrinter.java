@@ -6,7 +6,7 @@ public class isPrinter {
     public Sam4sPrint setPrinter1(){
         Sam4sPrint sam4sPrint = new Sam4sPrint();
         try {
-            Thread.sleep(300);
+            Thread.sleep(400);
             sam4sPrint.openPrinter(Sam4sPrint.DEVTYPE_ETHERNET, "172.30.1.45", 9100);
             sam4sPrint.resetPrinter();
         } catch (Exception exception) {
@@ -17,7 +17,7 @@ public class isPrinter {
     public Sam4sPrint setPrinter2(){
         Sam4sPrint sam4sPrint = new Sam4sPrint();
         try {
-            Thread.sleep(300);
+            Thread.sleep(400);
             sam4sPrint.openPrinter(Sam4sPrint.DEVTYPE_ETHERNET, "172.30.1.59", 9100);
             sam4sPrint.resetPrinter();
         } catch (Exception exception) {
@@ -28,7 +28,7 @@ public class isPrinter {
 
     public void closePrint1(Sam4sPrint sam4sPrint){
         try {
-            Thread.sleep(300);
+            Thread.sleep(400);
             sam4sPrint.closePrinter();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -37,7 +37,7 @@ public class isPrinter {
     }
     public void closePrint2(Sam4sPrint sam4sPrint){
         try {
-            Thread.sleep(300);
+            Thread.sleep(400);
             sam4sPrint.closePrinter();
         } catch (InterruptedException e) {
             e.printStackTrace();

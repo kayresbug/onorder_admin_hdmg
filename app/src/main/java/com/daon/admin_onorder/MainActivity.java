@@ -187,19 +187,17 @@ public class MainActivity extends AppCompatActivity {
         Sam4sPrint sam4sPrint = new Sam4sPrint();
         Sam4sPrint sam4sPrint2 = new Sam4sPrint();
         isPrinter isPrinter = new isPrinter();
-//        try {
-//            Thread.sleep(300);
-//            sam4sPrint.openPrinter(Sam4sPrint.DEVTYPE_ETHERNET, "172.30.1.45", 9100);
-//            sam4sPrint.resetPrinter();
-//            sam4sPrint2.openPrinter(Sam4sPrint.DEVTYPE_ETHERNET, "172.30.1.59", 9100);
-//            sam4sPrint2.resetPrinter();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Log.d("daon", "print error = "+e.getMessage());
-//        }
+
 
         sam4sPrint = isPrinter.setPrinter1();
         sam4sPrint2 = isPrinter.setPrinter2();
+        try {
+            Log.d("daon_test", "printer1  ="+sam4sPrint.getPrinterStatus());
+            Log.d("daon_test", "printer2  ="+sam4sPrint.getPrinterStatus());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("daon", "print error = "+e.getMessage());
+        }
         Sam4sBuilder builder = new Sam4sBuilder("ELLIX30", Sam4sBuilder.LANG_KO);
         try {
             builder.addTextAlign(Sam4sBuilder.ALIGN_CENTER);
@@ -216,7 +214,9 @@ public class MainActivity extends AppCompatActivity {
             builder.addFeedLine(1);
             builder.addCut(Sam4sBuilder.CUT_FEED);
             if (printOrderModel.getTable().contains("주문")) {
+                Thread.sleep(100);
                 sam4sPrint.sendData(builder);
+                Thread.sleep(100);
                 sam4sPrint2.sendData(builder);
             } else {
                 sam4sPrint.sendData(builder);
